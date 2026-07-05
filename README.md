@@ -5,7 +5,8 @@ Personal reference library — reusable skills and workflow protocols, written f
 ## Structure
 ```
 
-skills/ Single capabilities — reference docs read before or during work protocols/ Multi-step workflows — runnable procedures with defined deliverables
+skills/       Single capabilities — reference docs read before or during work
+protocols/    Multi-step workflows — runnable procedures with defined deliverables
 
 ```
 
