@@ -17,7 +17,7 @@ One folder per entry: `skills/[name]/SKILL.md`, `protocols/[name]/PROTOCOL.md`.
 Everything here is fetchable at raw URLs, e.g.:
 ```
 
-https://raw.githubusercontent.com/gwaiblade/craft/main/skills/remove-background/SKILL.md
+https://raw.githubusercontent.com/gwaiblade/craft/main/skills/product-image-extraction/SKILL.md
 
 ```
 
