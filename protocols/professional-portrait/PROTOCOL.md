@@ -12,7 +12,7 @@
 
 **Skills called:** none
 
-**Version:** 1.5
+**Version:** 1.6
 
 ---
 
@@ -56,7 +56,7 @@ Suitable for:
 
 Identity is sacred.
 
-Improve the presentation.
+Improve the photograph, not the person.
 
 Never redesign the person.
 
@@ -112,10 +112,12 @@ Wait until the image has been uploaded.
 
 **On receipt, check the photograph quality:**
 
-- The face is sharp and in focus
-- The face is large in frame — plenty of facial detail
+- The face occupies at least 30–40% of the image height
+- The face is sharp and in focus — especially the eyes
 - Lighting on the face is reasonably even
 - The face is not heavily obscured
+- No portrait-mode artifacts around the face or hair
+- Normal or telephoto perspective preferred over wide-angle selfies
 
 A sharp, well-lit reference produces a portrait that truly looks like the person. If the photo falls short, say what would help and ask for a better one — a stronger reference now is worth more than any adjustment later.
 
@@ -127,11 +129,11 @@ Only after receiving a good photograph proceed to Step 2.
 
 Ask:
 
-> Would you like to maximize facial accuracy?
+> Would you like maximum facial accuracy?
 
 Options:
 
-**A — Yes (Recommended)**
+**A — Yes (Recommended — Default)**
 
 Upload 2–5 additional photographs.
 
@@ -156,6 +158,10 @@ If any detail differs between photos — glasses, hairstyle, facial hair — the
 **B — No**
 
 Continue using only the primary photograph.
+
+If the user declines, explain:
+
+> A single image can still produce a good portrait, but multiple references generally improve identity preservation because they provide additional facial geometry from different viewpoints.
 
 Wait for completion before proceeding.
 
@@ -441,6 +447,31 @@ Generate ONE portrait at a time — never a grid. Identity accuracy is highest w
 
 Once confirmed, apply the following rules.
 
+**Image anchor:** When generating, use the uploaded photographs from Steps 1–2 as the direct face reference. Never substitute a text description of the face for the images themselves — the conversation describes the styling; the photographs define the person.
+
+---
+
+# PREFERRED EDITING STRATEGY
+
+Identity-preserving editing beats face regeneration.
+
+Whenever the image model supports editing, treat the uploaded face as locked.
+
+Only modify:
+
+- Background
+- Lighting
+- Exposure
+- Colour grading
+- Crop
+- Depth of field
+- Clothing (if requested)
+- Minor posture refinement
+
+Avoid regenerating facial structure.
+
+Regenerate the face only when the requested change makes editing impossible — and even then, anchor every facial detail to the reference photographs.
+
 ---
 
 # IDENTITY LOCK
@@ -452,6 +483,7 @@ The face must remain as close as possible to the uploaded photographs.
 Preserve:
 
 - Face shape
+- Facial asymmetry
 - Hairline
 - Hair direction
 - Hairstyle
@@ -484,6 +516,7 @@ Do NOT:
 - Slim the face
 - Change eye size
 - Smooth the skin excessively
+- Symmetrize the face
 - Change ethnicity
 - Make the subject younger
 - Make the subject older
@@ -707,7 +740,7 @@ Simplify the pose — hands in pockets or out of frame — or tighten the framin
 
 Restate the background as fixed input; adjust only perspective, colour temperature, focus, and light direction.
 
-Three attempts maximum. If the third attempt still misses, say plainly which input is limiting the result — usually the reference photograph — rather than continuing to generate.
+Three attempts maximum. If the third attempt still misses, say plainly which input is limiting the result — and explain that the limitation is the model's tendency to synthesize a new face rather than preserve exact geometry. Do not continue regenerating indefinitely.
 
 Identity always wins. A portrait with a perfect background and the wrong face is a failed portrait. A portrait with a slightly imperfect background and the right face is a fixable one.
 
@@ -729,6 +762,7 @@ The protocol succeeds only when the person's identity has been preserved while t
 
 # VERSION HISTORY
 
+- v1.6 — 2026-07-12 — Editing-vs-regeneration distinction added as Preferred Editing Strategy (edit around a locked face when the model supports it; regenerate only as last resort). Step 2 multi-reference flipped to recommended default, with rationale given on decline. Step 1 quality check quantified (face ≥30–40% of frame height, no portrait-mode artifacts, telephoto over wide-angle selfie). Identity Lock: facial asymmetry added to preserve list; "symmetrize the face" added to prohibitions. Core principle rephrased to "Improve the photograph, not the person." Image anchor rule added at top of Generation Rules (uploaded photos are the direct face reference at generation; never a text description built from the conversation). Source draft's retry reordering and 30-item preserve-list expansion evaluated and rejected — retry keeps one-variable-at-a-time diagnosis; list expansion risks prompt dilution (the v1.5 split rationale).
 - v1.5 — 2026-07-12 — Interactive one-question-at-a-time flow reinstated from pre-adoption ancestor (empirically stronger prompt); verification/agentic content split to companion VERIFICATION.md. Retry-by-simplification added. Composite mode tested and rejected (see VERIFICATION.md).
 - v1.4 — 2026-07-12 — Accuracy-hardening draft; superseded same-day by v1.5. Verification content moved to VERIFICATION.md.
 - v1.3 — 2026-07-05 — Adopted into gwaiblade/craft per CANON_PROTOCOL; renamed; header block added. Content unchanged from v1.2.
