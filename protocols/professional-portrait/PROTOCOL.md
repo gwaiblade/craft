@@ -240,6 +240,8 @@ Every run follows this order. No step is skipped.
 
 Run the Reference Quality Gate (Required Inputs §0). Fail → stop, request better input.
 
+Profile A: executed at Gate 1 of Sequential Intake, the moment the subject photograph arrives — before any other input is requested.
+
 ## 1 — Intake
 
 Collect:
@@ -253,9 +255,37 @@ Collect:
 - Clothing (default: Preserve)
 - Expression instruction (optional; default: Expression Lock applies)
 
-If the subject provides no preference for an input, apply the default and proceed.
+**Profile A — Sequential Intake.** Intake runs as four gates, strictly in order. Each gate requires its input before advancing. Never combine gates into one message, never assume an input that hasn't arrived, never generate before Gate 4 clears.
 
-Do not stall the run with questions the defaults already answer.
+**Gate 1 — Subject photograph(s).**
+Ask for the reference portrait. On receipt, immediately:
+- Run the Reference Quality Gate (§0). Fail → request a better photo; do not advance.
+- If multiple photos: designate the composition reference, state the conflict rule (composition reference wins on mutable attributes).
+
+**Gate 2 — Background.**
+Ask for the background pattern or picture. Wait for it.
+
+**Gate 3 — Pose.**
+Ask: A Preserve / **B Refine (default)** / C New.
+If C is chosen, state the Expression Lock relaxation (exact geometry → expression character) right here, not at validation.
+
+**Gate 4 — Remaining options + Confirm (hard stop).**
+Present in one block, defaults marked:
+
+> Framing: **Waist Up (default)** / Headshot / Chest Up / Three Quarter / Full Body ⚠
+> Mood: **Casual Chic (default)** / [list on request]
+> Clothing: **Preserve (default)** / Upgrade
+> Expression: **Exact lock (default)** / instruction: ______
+> Placement: **General Professional (default)** / Circle-Crop Avatar / Landscape
+>
+> Full run config: [state everything — references, background, pose, all of the above, any over-budget warnings]
+> Reply "defaults" or "go" to proceed, or state changes.
+
+Gate 4 IS the Confirm step. Do NOT generate in the same turn. Wait for explicit go-ahead.
+
+**Profile B:** all inputs arrive at activation; apply defaults for anything unspecified, log the confirm block, and proceed.
+
+Do not stall the run with questions beyond these gates.
 
 ## 2 — Reference Resolution
 
@@ -274,7 +304,11 @@ Facial references inform bone structure, proportions, and skin detail only.
 
 ## 3 — Confirm
 
-Before generating, state back in one block:
+**Profile A:** Confirm is executed as Gate 4 of Sequential Intake — do not run a second, separate confirmation. The requirements below define what Gate 4's state-back must contain.
+
+**Profile B:** log the confirm block and proceed.
+
+The confirm block states:
 
 - Execution profile
 - Composition reference
@@ -282,7 +316,7 @@ Before generating, state back in one block:
 - Any defaults applied
 - Any over-budget combinations or interaction-rule downgrades (Pose C → Expression Lock relaxation; Pose C + Upgrade warning; Full Body warning)
 
-Proceed unless corrected.
+In Profile A this state-back happens inside Gate 4, which is a hard stop: do NOT generate in the same turn; wait for explicit go-ahead.
 
 ## 4 — Generate
 
@@ -848,7 +882,7 @@ This criterion is operationalized by the side-by-side delivery step: the checkli
 
 # VERSION HISTORY
 
-- v1.4 — 2026-07-12 — Accuracy-hardening revision. Added: EXECUTION PROFILES (A — Conversational, active; B — Agentic, **spec'd but untested** — do not treat Profile B as validated until exercised against a real agent build). Added Reference Quality Gate as Run Sequence step 0. Replaced Identity checklist with Structured Identity Diff (ratio-based, per-feature, dual-scale validation). Added FREEDOM BUDGET section with drift-cost pricing; flagged Pose C + Clothing Upgrade as over-budget; added Full Body identity warning. Added Pose C → Expression Lock interaction rule (exact geometry → expression character). Added IDENTITY VERIFICATION — INSIGHTFACE (local script, per-subject calibration procedure, provisional bands, license caveat: model weights non-commercial). Added generation method hierarchy (Profile B) and method-downgrade as retry step 0. Split retry logic into marginal vs structural drift (one re-roll permitted for marginal). Delivery now side-by-side with composition reference; human is final acceptor. Honest-claims fix: multi-reference accuracy benefit conditional on generation method.
+- v1.4 — 2026-07-12 — Accuracy-hardening revision. Added: EXECUTION PROFILES (A — Conversational, active; B — Agentic, **spec'd but untested** — do not treat Profile B as validated until exercised against a real agent build). Added Reference Quality Gate as Run Sequence step 0. Replaced Identity checklist with Structured Identity Diff (ratio-based, per-feature, dual-scale validation). Added FREEDOM BUDGET section with drift-cost pricing; flagged Pose C + Clothing Upgrade as over-budget; added Full Body identity warning. Added Pose C → Expression Lock interaction rule (exact geometry → expression character). Added IDENTITY VERIFICATION — INSIGHTFACE (local script, per-subject calibration procedure, provisional bands, license caveat: model weights non-commercial). Added generation method hierarchy (Profile B) and method-downgrade as retry step 0. Split retry logic into marginal vs structural drift (one re-roll permitted for marginal). Delivery now side-by-side with composition reference; human is final acceptor. Honest-claims fix: multi-reference accuracy benefit conditional on generation method. Intake fix (from first Profile A run): Profile A intake restructured as four sequential gates (subject photos + quality check → background → pose → remaining options + hard-stop confirm) — silent-default-and-proceed removed the subject's choice window and allowed the executor to skip steps; gated intake makes skipping structurally impossible. Rejected approach (tested pre-ship, do not re-add without new tooling): Composite mode — superimpose subject onto background, harmonize only. Failed in practice: subject/background lighting mismatch dominates the result, and Profile A has no true pixel-faithful compositing (diffusion re-renders everything), so it delivers drift risk AND the pasted-on look. Viable only with genuine compositing tools (Photoshop-class / background-removal APIs), which is outside this protocol's execution surface.
 - v1.3 — 2026-07-05 — Adopted into gwaiblade/craft as `protocols/professional-portrait/PROTOCOL.md` per CANON_PROTOCOL. Renamed from CANON_PHOTOGRAPHY_CasualChic_Professional_Portrait_Protocol. Canonical header block added. Content unchanged from v1.2.
 - v1.2 — Generalized from LinkedIn-specific to professional portrait protocol. LinkedIn demoted to one placement option in Output Spec (circle-crop guidance retained). Default placement changed to General Professional. Checklist updated to platform-neutral wording.
 - v1.1 — Added RUN SEQUENCE (execution flow with defaults, reference resolution, confirm step, retry cap). Added RETRY RULES (failure-mode handling ordered by degrees-of-freedom reduction). Added defaults to Pose (B), Mood (Casual Chic), Clothing (Preserve). Added multi-reference conflict rule (composition reference wins on mutable attributes). Added expression as optional intake item; Expression Lock escape clause given a real input path. Added output spec (LinkedIn placement and crop-safety guidance).
