@@ -10,7 +10,9 @@
 
 **Skills called:** none
 
-**Version:** 1.3
+**Execution Profiles:** A — Conversational (active). B — Agentic (spec'd, untested). See EXECUTION PROFILES.
+
+**Version:** 1.4
 
 ---
 
@@ -76,7 +78,55 @@ Never change this order.
 
 ---
 
+# EXECUTION PROFILES
+
+The core protocol (identity lock, priority order, freedom budget, intake gate, validation, retry logic) applies everywhere. How validation and retries are *executed* depends on the tooling available. Declare the active profile at intake.
+
+## Profile A — Conversational
+
+Protocol pasted into a chat assistant (ChatGPT, Claude) driving prompt-based image generation.
+
+Constraints accepted as fact:
+- Generation method is full regeneration from image + prompt — the highest-drift method. No masking, no inpainting, no identity adapters, no seed control.
+- The identity ceiling is tool-limited. Some faces will not survive this method at the quality bar this protocol demands, regardless of protocol discipline. Detect this early (intake gate + first validation) rather than burning retry cycles against it.
+
+Validation in Profile A:
+- Primary: **Structured Identity Diff** (see Final Validation) performed by the assistant on the generated image vs the composition reference.
+- Optional but recommended: **InsightFace verification** run locally by the operator (see IDENTITY VERIFICATION — INSIGHTFACE). Download candidate → run script → feed score back into the chat as the pass/fail input.
+- Final acceptor: the human, via side-by-side delivery.
+
+## Profile B — Agentic *(spec'd, untested — see Version History)*
+
+Protocol executed by an agent with tool access.
+
+Additional capabilities the agent must use:
+- **InsightFace scoring in the loop.** Every candidate is scored before the structured diff. Score gates the retry loop automatically.
+- **Generation method hierarchy.** Where the pipeline supports it, prefer lower-drift methods in this order:
+  1. Face-locked / inpaint-around-face (face pixels sourced from the reference) — lowest drift
+  2. Identity-adapter conditioning (InstantID / PuLID / IP-Adapter FaceID class) — moderate
+  3. Full regeneration from image + prompt — highest drift, last resort
+- **Retry loop:** generate → score → below threshold → downgrade one degree of freedom per RETRY RULES → regenerate. Method downgrade (3→2→1 above) is a valid retry move and outranks clothing/pose downgrades.
+- Seed control, where available, enables the marginal-drift re-roll (see RETRY RULES).
+
+---
+
 # REQUIRED INPUTS
+
+## 0. Reference Quality Gate
+
+Run before anything else. A weak reference caps output fidelity — the generator fills missing information with priors, and priors are exactly what identity drift is.
+
+The composition reference must pass ALL of:
+
+- ☐ Face is sharp (no motion blur, no soft focus on the face)
+- ☐ Face is large enough — as a rule of thumb, several hundred pixels on its long axis at native resolution
+- ☐ Lighting is reasonably even — no half-face hard shadow, no blown highlights on skin
+- ☐ No heavy compression artifacts on the face
+- ☐ Face is not heavily occluded (hands, hair across features, extreme angle)
+
+Any failure → request a better photograph **before** starting the run. Do not proceed and hope. A gate failure caught here costs nothing; the same failure discovered at validation costs a full retry cycle.
+
+Facial references (secondary images) should meet the same bar but a marginal facial reference may still be used — it informs, it doesn't anchor.
 
 ## 1. Subject Photograph
 
@@ -92,9 +142,7 @@ If multiple photographs are provided:
 - Use one image for composition.
 - Use every image for facial reference.
 
-More references = higher facial accuracy.
-
----
+More references = higher facial accuracy **only if the generation method actually conditions on multiple images** (identity adapters, multi-image prompting). In a single-image prompt-based pipeline (Profile A default), extra references improve the *assistant's* ability to diff and describe, but do not directly condition generation. State this honestly at intake rather than implying accuracy the pipeline can't deliver.
 
 ## 2. Background
 
@@ -124,8 +172,6 @@ Only adjust:
 - Focus
 - Depth of field
 
----
-
 ## 3. Pose Preference
 
 Choose one.
@@ -138,8 +184,6 @@ Maintain the original body position.
 
 Only improve posture naturally.
 
----
-
 ### B — Refine Pose
 
 Maintain the overall pose while making it feel:
@@ -149,8 +193,6 @@ Maintain the overall pose while making it feel:
 - more balanced
 
 No dramatic repositioning.
-
----
 
 ### C — New Pose
 
@@ -167,16 +209,42 @@ Examples:
 - Walking naturally
 - Standing casually
 
+**Interaction rule — Pose C relaxes the Expression Lock.** A new pose usually changes head angle, and exact eye direction, lip geometry, and expression micro-detail are geometrically coupled to head position. Under Pose C, the Expression Lock downgrades from *exact geometry* to *expression character*: same emotion, same smile intensity, same energy — not pixel-matched features. This downgrade must be stated at the Confirm step, not discovered at validation.
+
+---
+
+# FREEDOM BUDGET
+
+The generator has a freedom budget. Every liberty granted spends budget that would otherwise protect the face. Approximate drift cost of each liberty:
+
+| Liberty | Drift cost | Why |
+|---|---|---|
+| Pose C (new pose) | **High** | Usually forces a new head angle → face must be re-synthesized rather than re-rendered |
+| Framing: Full Body | **High** | Face rendered at a fraction of the pixels; identity fidelity degrades with face pixel density |
+| Clothing: Upgrade | Moderate | Regenerates torso; bleed into neck/jaw is common |
+| Framing: Three Quarter | Moderate | Reduced face pixel density |
+| Mood / lighting change | Low | Mostly grading, minimal geometry pressure |
+| Background swap | Low | Nearly free when the face is otherwise anchored |
+
+**Over-budget combination:** Pose C + Clothing Upgrade together is expected to fail identity in Profile A. If both are requested, say so explicitly at Confirm and get acknowledgment before running.
+
+**Full Body warning:** Full Body is not a neutral framing choice — it trades identity fidelity for coverage. In Profile B, prefer generating tighter (Waist Up) and outpainting the body rather than generating the face small. In Profile A, recommend against Full Body when likeness is the priority.
+
 ---
 
 # RUN SEQUENCE
 
 Every run follows this order. No step is skipped.
 
+## 0 — Quality Gate
+
+Run the Reference Quality Gate (Required Inputs §0). Fail → stop, request better input.
+
 ## 1 — Intake
 
 Collect:
 
+- Execution profile (A or B)
 - Subject photograph(s)
 - Background image
 - Pose preference (default: B — Refine Pose)
@@ -185,11 +253,9 @@ Collect:
 - Clothing (default: Preserve)
 - Expression instruction (optional; default: Expression Lock applies)
 
-If the subject provides no preference for an input,
-apply the default and proceed.
+If the subject provides no preference for an input, apply the default and proceed.
 
-Do not stall the run with questions
-the defaults already answer.
+Do not stall the run with questions the defaults already answer.
 
 ## 2 — Reference Resolution
 
@@ -200,19 +266,21 @@ If multiple subject photographs are provided:
 
 Conflict rule:
 
-The composition reference wins on all mutable attributes—
-glasses, hairstyle, hair length, facial hair, accessories.
+The composition reference wins on all mutable attributes—glasses, hairstyle, hair length, facial hair, accessories.
 
-Facial references inform bone structure,
-proportions, and skin detail only.
+Facial references inform bone structure, proportions, and skin detail only.
+
+**Profile B only — Calibration:** if InsightFace verification is active and multiple real photos of the subject exist, run the calibration procedure (see IDENTITY VERIFICATION) now, before generating. It sets the pass threshold for this subject.
 
 ## 3 — Confirm
 
 Before generating, state back in one block:
 
+- Execution profile
 - Composition reference
 - Pose / Framing / Mood / Clothing selections
 - Any defaults applied
+- Any over-budget combinations or interaction-rule downgrades (Pose C → Expression Lock relaxation; Pose C + Upgrade warning; Full Body warning)
 
 Proceed unless corrected.
 
@@ -224,34 +292,31 @@ One at a time.
 
 Not a grid.
 
-Identity accuracy degrades when
-generation is treated as a lottery.
+Identity accuracy degrades when generation is treated as a lottery.
+
+Profile B: use the lowest-drift generation method the pipeline supports (see method hierarchy).
 
 ## 5 — Validate
 
-Run the Final Validation Checklist in order.
+Profile B: run InsightFace scoring first. Score below the fail line → skip the diff, go straight to Retry Rules.
 
-Identity section first.
+Then (both profiles): run the Final Validation Checklist in order. Identity section first — and the Identity section is now a **Structured Identity Diff**, not a tick-box pass.
 
-If Identity fails, stop—
-do not evaluate the remaining sections.
+If Identity fails, stop — do not evaluate the remaining sections. Go to Retry Rules.
 
-Go to Retry Rules.
+Validate at two scales: full resolution AND avatar size (~128px circle crop). Smoothed-skin drift passes small and fails large; proportion drift can pass large and fail small.
 
 ## 6 — Deliver or Iterate
 
-All sections pass → deliver.
+All sections pass → deliver **as a side-by-side with the composition reference**. The checklist is a filter; the human who knows the face is the validator. Final acceptance belongs to the human, not the checklist.
 
 Any section fails → apply Retry Rules.
 
 Maximum three retry cycles per run.
 
-After three failures, stop and report
-which constraint is unachievable
-with the current inputs.
+After three failures, stop and report which constraint is unachievable with the current inputs.
 
-Do not silently relax the Identity Lock
-to force a completion.
+Do not silently relax the Identity Lock to force a completion.
 
 ---
 
@@ -263,7 +328,7 @@ Choose one.
 - Chest Up
 - Waist Up (Recommended)
 - Three Quarter
-- Full Body
+- Full Body *(identity-fidelity warning — see Freedom Budget)*
 
 Default:
 
@@ -280,11 +345,8 @@ State the intended placement before generating.
 (LinkedIn profile, Slack, GitHub, most platform avatars)
 
 - Renders as a **circle**.
-- Compose square-safe: face centred,
-  generous headroom, nothing critical
-  in the corners.
-- Waist Up remains valid, but the face
-  must survive a centre circle crop.
+- Compose square-safe: face centred, generous headroom, nothing critical in the corners.
+- Waist Up remains valid, but the face must survive a centre circle crop.
 
 ### Landscape Placement
 
@@ -297,18 +359,14 @@ State the intended placement before generating.
 
 (Speaker profiles, about pages, press kits)
 
-- Deliver at the native aspect ratio
-  of the composition.
+- Deliver at the native aspect ratio of the composition.
 - No forced crop.
 
 Default placement:
 
 **General Professional**
 
-If the destination is unknown,
-compose circle-safe anyway—
-it costs nothing and survives
-every placement.
+If the destination is unknown, compose circle-safe anyway — it costs nothing and survives every placement.
 
 ---
 
@@ -341,8 +399,6 @@ Default: **Preserve**
 ### Preserve
 
 Keep the existing outfit.
-
----
 
 ### Upgrade
 
@@ -461,6 +517,79 @@ The expression should feel identical.
 
 Only photographed under better lighting.
 
+**Pose C exception:** under Pose C the lock downgrades to expression *character* (same emotion, same intensity), because exact eye direction and lip geometry cannot survive a head-angle change. See Pose Preference interaction rule.
+
+---
+
+# IDENTITY VERIFICATION — INSIGHTFACE
+
+Objective identity scoring using the open-source InsightFace library (https://github.com/deepinsight/insightface). Converts the retry cap from "three subjective judgments" into "three attempts to clear a bar."
+
+**License note:** InsightFace code is MIT-licensed, but the pretrained model packs (e.g., `buffalo_l`) are licensed for **non-commercial research use**. Fine for personal portrait runs. If this protocol is ever executed inside commercial workflows (e.g., Cranberry), the model licensing must be re-evaluated first.
+
+## Setup (once, local)
+
+```bash
+pip install insightface onnxruntime numpy opencv-python
+# buffalo_l model pack (~300MB) downloads automatically on first run
+```
+
+## Reference script
+
+```python
+#!/usr/bin/env python3
+"""face_sim.py — cosine similarity between the largest face in two images.
+Usage: python face_sim.py reference.jpg candidate.jpg"""
+import sys
+import cv2
+import numpy as np
+from insightface.app import FaceAnalysis
+
+def largest_face_embedding(app, path):
+    img = cv2.imread(path)
+    if img is None:
+        sys.exit(f"Could not read image: {path}")
+    faces = app.get(img)
+    if not faces:
+        sys.exit(f"No face detected in: {path}")
+    face = max(faces, key=lambda f: (f.bbox[2] - f.bbox[0]) * (f.bbox[3] - f.bbox[1]))
+    return face.normed_embedding
+
+def main():
+    if len(sys.argv) != 3:
+        sys.exit("Usage: python face_sim.py reference.jpg candidate.jpg")
+    app = FaceAnalysis(name="buffalo_l", providers=["CPUExecutionProvider"])
+    app.prepare(ctx_id=0, det_size=(640, 640))
+    ref = largest_face_embedding(app, sys.argv[1])
+    cand = largest_face_embedding(app, sys.argv[2])
+    sim = float(np.dot(ref, cand))
+    print(f"cosine_similarity: {sim:.4f}")
+
+if __name__ == "__main__":
+    main()
+```
+
+## Calibration (required before trusting thresholds)
+
+Fixed thresholds misfire — same-identity similarity varies by subject, lighting, and photo age. Calibrate per subject:
+
+1. Collect 5–10 pairs of **real** photographs of the subject (different days/lighting if possible).
+2. Score every pair with the script.
+3. The subject's real-pair band (min–mean) is the baseline. A generated candidate should score **within or near the low end of the real-pair band** to pass.
+
+## Provisional bands *(uncalibrated — replace after calibration)*
+
+- **≥ 0.50** — pass on identity score; proceed to Structured Identity Diff
+- **0.35 – 0.50** — borderline; Structured Identity Diff decides, weight human judgment heavily
+- **< 0.35** — fail; go directly to Retry Rules, skip the diff
+
+The score gates but does not replace the diff: embedding similarity can miss hairline, glasses, and expression errors that humans catch instantly, and the diff catches drift the embedding forgives.
+
+## Usage per profile
+
+- **Profile A:** operator runs the script manually on each downloaded candidate and reports the score back into the chat. The assistant treats the score as the Identity section's first gate.
+- **Profile B:** the agent runs the script (or equivalent library call) automatically on every candidate before any other validation.
+
 ---
 
 # LIGHTING
@@ -564,23 +693,33 @@ Not:
 
 # FINAL VALIDATION CHECKLIST
 
-Before considering the portrait complete, verify:
+Before considering the portrait complete, verify. Identity first; the Identity section is a structured diff, not a tick-box pass.
 
-## Identity
+## Identity — Structured Identity Diff
 
-☐ Face immediately recognizable
+Place the face crop of the candidate **beside** the face crop of the composition reference. Evaluate one feature at a time — do not batch-approve. Drift shows up in **ratios**, not individual features.
 
-☐ Face proportions unchanged
+☐ Interocular distance relative to face width — matches
 
-☐ Hair identical
+☐ Nose bridge width and nose length — match
 
-☐ Glasses identical
+☐ Philtrum length (nose base to upper lip) — matches
 
-☐ Facial hair preserved
+☐ Jaw angle and chin shape — match
 
-☐ Skin texture realistic
+☐ Hairline shape and hair direction — identical
 
----
+☐ Ear position and size — match
+
+☐ Glasses — identical frame, identical position
+
+☐ Facial hair — preserved exactly
+
+☐ Skin texture realistic — wrinkles, moles, freckles present, no synthetic smoothing
+
+☐ (If InsightFace active) similarity score at or above calibrated pass line
+
+☐ Verified at BOTH full resolution and ~128px avatar crop
 
 ## Expression
 
@@ -590,9 +729,7 @@ Before considering the portrait complete, verify:
 
 ☐ Emotion unchanged
 
-☐ Expression matches original photograph
-
----
+☐ Expression matches original photograph *(character-match only if Pose C — see Expression Lock)*
 
 ## Body
 
@@ -604,8 +741,6 @@ Before considering the portrait complete, verify:
 
 ☐ Clothing realistic
 
----
-
 ## Environment
 
 ☐ Background preserved
@@ -615,8 +750,6 @@ Before considering the portrait complete, verify:
 ☐ Lighting consistent
 
 ☐ Colour grading natural
-
----
 
 ## Overall
 
@@ -638,51 +771,43 @@ Before considering the portrait complete, verify:
 
 # RETRY RULES
 
-Failures are fixed by reducing degrees of freedom,
-never by regenerating blindly.
+Failures are fixed by reducing degrees of freedom, never by regenerating blindly.
 
-The generator has a freedom budget.
+The generator has a freedom budget (see FREEDOM BUDGET for pricing). When a run fails, refund freedom in this order.
 
-Every liberty granted—new pose, new clothing,
-new lighting environment—spends budget
-that would otherwise protect the face.
+## Marginal vs Structural drift
 
-When a run fails, refund freedom
-in this order:
+First, classify the identity failure:
 
-## Identity Failure
+- **Structural drift** — wrong jaw, wrong eye spacing, wrong nose, wrong face shape. The geometry is wrong. → Reduce freedom (below). A re-roll will not fix geometry the settings caused.
+- **Marginal drift** — geometry right, but slightly-off smile, slightly synthetic skin, minor hairline softness. → **One** seed re-roll (Profile B, where seed control exists) or one straight regeneration (Profile A) is a legitimate first retry before spending a downgrade. One only. A second marginal failure is treated as structural.
+
+## Identity Failure (structural)
 
 The face drifted.
 
+0. **(Profile B)** Downgrade the generation method one level toward face-locked (method hierarchy in EXECUTION PROFILES). This outranks every other downgrade — it buys more drift reduction than clothing and pose combined.
 1. Downgrade Clothing to **Preserve**.
 2. Downgrade Pose to **A — Preserve Pose**.
 3. Retry.
-4. Still failing → request additional facial
-   reference photographs before any further attempt.
+4. Still failing → request additional facial reference photographs — and re-check the composition reference against the Quality Gate; a gate-marginal reference that scraped through is the usual culprit at this stage.
 
-Never fix identity drift by
-"trying again with the same settings."
-
-Same settings produce the same drift.
+Never fix structural identity drift by "trying again with the same settings." Same settings produce the same drift.
 
 ## Expression Failure
 
 Face is right, emotion is wrong.
 
 1. Re-anchor to the composition reference expression.
-2. Explicitly restate the Expression Lock
-   in the generation instruction.
+2. Explicitly restate the Expression Lock in the generation instruction.
 3. Retry with all other settings unchanged.
 
 ## Body / Hands Failure
 
 Anatomy or hands are wrong.
 
-1. Simplify the pose—hands in pockets
-   or fully out of frame.
-2. Tighten framing one level
-   (Waist Up → Chest Up) if hands
-   remain unfixable.
+1. Simplify the pose—hands in pockets or fully out of frame.
+2. Tighten framing one level (Waist Up → Chest Up) if hands remain unfixable.
 3. Retry.
 
 ## Environment Failure
@@ -690,24 +815,18 @@ Anatomy or hands are wrong.
 Background was redesigned or the blend is off.
 
 1. Restate the background as immutable input.
-2. Correct only integration parameters:
-   perspective, colour temperature,
-   focus, light direction.
+2. Correct only integration parameters: perspective, colour temperature, focus, light direction.
 3. Retry.
 
 ## Priority Under Conflict
 
-If fixing one failure would cause another,
-resolve by the Priority Order.
+If fixing one failure would cause another, resolve by the Priority Order.
 
 Identity always wins.
 
-A portrait with a perfect background
-and the wrong face is a failed run.
+A portrait with a perfect background and the wrong face is a failed run.
 
-A portrait with a slightly awkward
-background blend and the right face
-is a fixable run.
+A portrait with a slightly awkward background blend and the right face is a fixable run.
 
 ---
 
@@ -723,10 +842,13 @@ If someone who personally knows the subject sees the portrait, their reaction sh
 
 The objective is to elevate the photography, never to alter the person's identity.
 
+This criterion is operationalized by the side-by-side delivery step: the checklist filters, the human accepts.
+
 ---
 
 # VERSION HISTORY
 
+- v1.4 — 2026-07-12 — Accuracy-hardening revision. Added: EXECUTION PROFILES (A — Conversational, active; B — Agentic, **spec'd but untested** — do not treat Profile B as validated until exercised against a real agent build). Added Reference Quality Gate as Run Sequence step 0. Replaced Identity checklist with Structured Identity Diff (ratio-based, per-feature, dual-scale validation). Added FREEDOM BUDGET section with drift-cost pricing; flagged Pose C + Clothing Upgrade as over-budget; added Full Body identity warning. Added Pose C → Expression Lock interaction rule (exact geometry → expression character). Added IDENTITY VERIFICATION — INSIGHTFACE (local script, per-subject calibration procedure, provisional bands, license caveat: model weights non-commercial). Added generation method hierarchy (Profile B) and method-downgrade as retry step 0. Split retry logic into marginal vs structural drift (one re-roll permitted for marginal). Delivery now side-by-side with composition reference; human is final acceptor. Honest-claims fix: multi-reference accuracy benefit conditional on generation method.
 - v1.3 — 2026-07-05 — Adopted into gwaiblade/craft as `protocols/professional-portrait/PROTOCOL.md` per CANON_PROTOCOL. Renamed from CANON_PHOTOGRAPHY_CasualChic_Professional_Portrait_Protocol. Canonical header block added. Content unchanged from v1.2.
 - v1.2 — Generalized from LinkedIn-specific to professional portrait protocol. LinkedIn demoted to one placement option in Output Spec (circle-crop guidance retained). Default placement changed to General Professional. Checklist updated to platform-neutral wording.
 - v1.1 — Added RUN SEQUENCE (execution flow with defaults, reference resolution, confirm step, retry cap). Added RETRY RULES (failure-mode handling ordered by degrees-of-freedom reduction). Added defaults to Pose (B), Mood (Casual Chic), Clothing (Preserve). Added multi-reference conflict rule (composition reference wins on mutable attributes). Added expression as optional intake item; Expression Lock escape clause given a real input path. Added output spec (LinkedIn placement and crop-safety guidance).
