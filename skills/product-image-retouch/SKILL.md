@@ -1,445 +1,206 @@
 ---
-description: Turn ordinary product photos into clean, natural-looking
-  e-commerce product photography for Amazon, Shopify, and marketplaces.
-  Preserve the real product's identity, geometry, proportions, quantity,
-  packaging, accessories, orientation, and composition while improving
-  the background, exposure, lighting, reflections, and overall
-  photographic presentation. Use when the user provides a real product
-  photo and wants a cleaner white-background listing image without
-  making the product look redesigned, CGI, or artificially perfect.
 name: product-image-retouch
+description: Turn a real product photo (typically an iPhone shot on a plain or uniform-colour background) into a clean, natural white-background listing image for Amazon, Shopify, Etsy, and marketplaces. Cuts the product out, removes background colour spill, cleans up and brightens it, and adds a grounded contact shadow, without changing the physical product. Use whenever the user wants to remove a background, cut out a product, clean up a product photo, make a listing or Amazon main image, or put a product on white, even if they don't say "retouch". Not for lifestyle scenes, composites, illustrations, or redesigning the product.
 ---
 
 # Product image retouch
 
 ## Objective
 
-**Retouch and reconstruct the photography, not the product.**
+**Retouch the photograph, not the product.** Accurately represent a fresh, representative sample of the product being sold, rather than every incidental flaw of the photographed sample. Target reaction: "This is the same product, just photographed properly."
 
-The output must look like the **same physical objects from the source
-photograph**, photographed in the same arrangement under a simple
-professional product-photography setup.
+Default method: **preservation-first natural retouch.** Keep source pixels wherever they already look right. Use masking, despill, tone, cleanup, and reflection reduction first. Limited reconstruction is a scoped exception (see below), never permission to redesign.
 
-The source image is authoritative for what the product is.
+---
 
-Do not turn it into an idealized, redesigned, more premium, more
-symmetrical, or CGI-like version of the product.
+## Fidelity locks
 
-The target reaction is:
+The source photo is authoritative for product identity and arrangement. Preserve:
 
-> "This is the same product, just photographed properly."
+- identity, geometry, proportions, construction
+- quantity of every retained component
+- material identity, inherent texture and finish, colours
+- packaging artwork, wording, logo, orientation
+- included accessories
+- camera angle, perspective, object orientation
+- relative scale, placement, overlap
 
-Not:
+The only exception is a declared, reference-supported damage correction under the Cleanup boundary. Nothing else overrides these locks.
 
-> "This is a render of what the product might look like."
+Do not beautify, symmetrize, redesign, or make the product look more premium. Do not add, duplicate, merge, or substitute components; remove objects only per the retention scope. Packaging is a physical reference, not a design brief. Fidelity locks guide refinement; source-derived pixels may be adjusted conventionally, and usable regions should be preserved rather than regenerated where possible. Everything must pass Verification.
 
-------------------------------------------------------------------------
+---
 
-## Product fidelity rule --- non-negotiable
+## Cleanup boundary
 
-Preserve the source photograph's:
+This is the single definition of what cleanup may change. Other sections refer to it.
 
--   product identity
--   geometry and proportions
--   construction and physical features
--   quantity of every component
--   materials and colors
--   packaging design and wording
--   included accessories
--   camera angle and perspective
--   object orientation
--   relative scale
--   relative placement and overlap
+**Removable:** dust, lint, fingerprints, smudges, minor handling scratches, small scuffs, and other incidental surface imperfections a fresh sample would avoid.
 
-Do not beautify the physical product.
+**Incidental damage:** minor dents, bends, chips, or warps may be corrected without extra confirmation when they are specific to the photographed sample and an **undamaged reference** clearly establishes the intended shape, finish, and construction. This corrects the sample; it does not idealize the geometry.
 
-Do not make imperfect objects more symmetrical.
+**What counts as an undamaged reference:**
+- another photo of the same product, supplied by the user or present in the session
+- another unit of the same product visible in the same photo
 
-Do not change shapes, thicknesses, corner radii, curves, handles, racks,
-molds, stones, utensils, lids, sticks, or accessories.
+**Not a reference:**
+- the model's expectation of what the product "should" look like
+- the opposite side of the same object, mirrored
+- renders or marketing images, unless the user designates them
 
-Do not add, remove, duplicate, merge, or substitute components.
+Without a qualifying reference, preserve the damage and note it in the Report. Do not stop to ask unless the damage makes the image unusable.
 
-Packaging is a physical product reference, not a design brief. Preserve
-its artwork, typography, colors, logo, proportions, orientation, and
-visible construction.
+**Preserve:**
+- inherent finish and texture: brushed or directional grain, machining or polishing lines, weave, print texture
+- construction: seams, welds, rivets, molding marks, folds, edges
+- representative features, natural material variation, and defects customers would normally receive
 
-------------------------------------------------------------------------
+**Tie-break:** repeated patterns and consistent grain are evidence of inherent finish, not proof; a handling scratch can also be directional. Use available references and product context. If unsure, keep the feature.
 
-## Naturalism rule
+---
 
-**Realism is more important than perfection.**
+## Naturalism
 
-Preserve enough real-world imperfection that the result still reads as
-photography.
+**Realism over perfection.** Bright, neutral, diffused light with visible midtones and restrained contrast.
 
-For reflective metal, retain:
+- **Metal:** keep uneven reflections, highlight gradients, and both light and dark areas. Never uniform bright chrome.
+- **Glass:** keep refraction, edge thickness, slight distortion.
+- **Packaging:** keep material texture, folds, print variation.
 
--   subtle uneven reflections
--   realistic highlight gradients
--   minor surface variation
--   slight scratches or manufacturing marks where visible
--   natural dark and light areas
+Avoid CGI look, heavy HDR, glowing edges, artificial sharpness, synthetic texture, perfectly uniform lighting.
 
-For glass, retain:
+---
 
--   realistic refraction
--   edge thickness
--   minor distortion
--   subtle reflections
+## Inputs
 
-For cardboard and packaging, retain:
+Use the request and session context first. Ask only when an unresolved detail materially affects faithful representation.
 
--   physical texture
--   slight edge wear
--   folds and seams
--   realistic print variation
+| Input | Default |
+|---|---|
+| Objects to retain | Product, included accessories, included packaging; exclude known demonstration props. Ask only if inclusion is unclear and affects the main image. |
+| Undamaged reference | None. Damage is preserved unless a qualifying reference is available. |
+| Intended use | Amazon main image |
+| Shadow | Subtle contact shadow |
+| Composition | Locked to source; crop may tighten |
 
-Do not make surfaces perfectly smooth, perfectly reflective, perfectly
-symmetrical, or uniformly lit.
+If inclusion stays unresolved, don't invent bundle contents or call the image main-listing-ready; note it in the Report.
 
-Avoid the appearance of:
-
--   CGI
--   3D rendering
--   excessive HDR
--   luxury advertising renders
--   hyper-polished chrome
--   artificial sharpness
--   synthetic material textures
-
-A slightly imperfect but believable photograph is better than a flawless
-artificial one.
-
-------------------------------------------------------------------------
-
-## Composition lock
-
-Unless the user explicitly asks for a new composition, maintain the
-source composition.
-
-Preserve:
-
--   camera position
--   camera height
--   viewing angle
--   perspective
--   orientation of every object
--   relative positions
--   overlap
--   foreground/background relationships
--   approximate spacing
-
-Do not automatically rearrange the products into a cleaner catalogue
-composition.
-
-Cropping may be tightened, but the physical arrangement should remain
-recognizably the same.
-
-------------------------------------------------------------------------
-
-## Permitted improvements
-
-The image may be reconstructed where necessary to improve the
-**photography**.
-
-Allowed:
-
--   remove the original background
--   replace it with clean white
--   brighten exposure
--   neutralize white balance
--   soften harsh lighting
--   improve tonal separation
--   reduce distracting room reflections
--   remove minor dust or photographic blemishes
--   clean obvious background contamination
--   improve edge separation
--   create subtle realistic contact shadows
--   improve overall clarity
--   tighten the crop
-
-These improvements must not materially alter the physical product.
-
-------------------------------------------------------------------------
-
-## Lighting target
-
-Create the appearance of a **simple professional softbox product
-shoot**, not a dramatic commercial render.
-
-Default lighting:
-
--   bright
--   neutral
--   soft
--   diffused
--   natural
--   restrained contrast
--   broad realistic highlights
--   visible midtone detail
--   soft contact shadows
-
-The image should not be dark.
-
-Avoid:
-
--   dramatic lighting
--   hard rim lights
--   deep shadows
--   crushed blacks
--   glowing edges
--   cinematic contrast
--   excessive specular highlights
-
-Reflective metal should still contain both light and dark reflections so
-its shape and material remain believable.
-
-Do not solve dark metal by making the entire object uniformly bright
-silver.
-
-------------------------------------------------------------------------
-
-## Background
-
-Replace the improvised or distracting background with a clean e-commerce
-white background.
-
-For Amazon main images:
-
-`#FFFFFF`
-
-Remove:
-
--   paper wrinkles
--   backdrop seams
--   room edges
--   furniture
--   dirty white areas
--   obvious background color casts
-
-Retain subtle contact shadows so objects remain grounded.
-
-Do not make products appear to float.
-
-------------------------------------------------------------------------
-
-## Reconstruction strength
-
-Default reconstruction strength:
-
-**Restrained / natural.**
-
-Think:
-
-> competent professional photographer cleaning up an iPhone product
-> photo
-
-not:
-
-> advertising studio recreating the product from scratch
-
-When uncertain, change less.
-
-------------------------------------------------------------------------
+---
 
 ## Method
 
-### 1. Read the source physically
+1. **Inventory** retained components, quantities, packaging, accessories, materials, orientation, distinctive details. **Declare** any damage corrections now: the region, the defect, and the reference. Only declared regions may change shape later.
+2. **Edit Plan (automatic, internal).** Classify each major object/region as **PRESERVE**, **CONVENTIONAL RETOUCH**, **GENERATIVE RECONSTRUCTION**, or **EXCLUDE**. PRESERVE keeps source-derived pixels; CONVENTIONAL RETOUCH uses masking, despill, tone, cleanup, and reflection reduction on source-derived pixels; EXCLUDE follows the retention scope. Identify exact reconstruction regions and the legitimate photographic defect or declared reference-supported damage correction that justifies each. Apply the usable-pixel preference and packaging hard lock below before routing tools. Record background replacement and contact-shadow creation separately. The AI determines this plan; no user approval is required in normal operation. Update it only when conventional retouch establishes a justified need for reconstruction.
+3. **Mask** retained objects and composite onto `#FFFFFF` at source resolution.
+4. **Despill and refine edges.** Remove backdrop tint from edges, reflections, and glass; keep true product colour and believable transparency. No halos, no razor-cut edges.
+5. **Tone:** global exposure/white balance/contrast, then gentle local lifts of dark areas and harsh highlights. No heavy dodge/burn on curved surfaces; it changes perceived curvature.
+6. **Clean** surface imperfections per the Cleanup boundary. **Reduce** distracting room/photographer reflections without flattening light/dark variation. Preserve source-visible reflections of nearby product objects and packaging, including their reflected colours and shapes; do not erase these interactions when reducing room, photographer, or backdrop contamination.
+7. **Reconstruct** only specifically identified regions in the Edit Plan that still fail after steps 4–6, and any declared damage corrections that need new pixels (see below).
+8. **Contact shadow** beneath the product, following its footprint and a coherent light direction.
+9. **Verify** before crop/resize.
+10. **Crop, resize, export**, then inspect the exported file. Deliver only after Verification passes.
 
-Before editing, identify:
+These are editing priorities, not a required layer stack. If clipping, blur, or lost detail makes essential geometry unknowable, request a better source; don't invent product facts.
 
--   every product/component
--   exact quantity
--   packaging
--   accessories
--   important geometry
--   materials
--   camera angle
--   orientation
--   relative placement
--   distinctive product details
+---
 
-Treat these as locked references.
+## Usable-pixel preference and packaging hard lock
 
-### 2. Preserve the scene geometry
+**Usable pixels (preference, not gate):** prefer preserving source pixels wherever they already look right. Use masking, despill, tone, cleanup, and reflection reduction before reaching for generative reconstruction, and keep whole-image regeneration out of the default path. When the only available tool is a whole-image generative editor, use it with the prompt locks below and judge the output by the Verification checks — don't refuse the job because a pixel-preserving path doesn't exist. If the output fails Verification on material drift, re-edit once with tighter prompt locks; if it still fails, note the limitation in the Report rather than looping.
 
-Keep the original camera logic and arrangement.
+**Packaging hard lock:** packaging containing artwork, logos, or text must remain source-derived; never generatively reconstruct it. Conventional tone, despill, and cleanup are allowed within the existing boundaries. If a broader edit alters packaging, composite the original source-derived packaging back into the output and verify it before delivery. Damage corrections do not override this lock.
 
-Do not improve the composition unless explicitly requested.
+---
 
-### 3. Improve the photographic environment
+## Limited reconstruction
 
-Replace the background and improve:
+Allowed **without confirmation** for two purposes only:
+- **Photographic defects** in specifically identified regions that steps 4–6 can't fix naturally: severe environmental reflections in metal or glass, unusably dark surfaces, contaminated highlights, lighting artifacts.
+- **Declared, reference-supported damage corrections** from step 1, scoped in the Edit Plan and subject to the packaging hard lock.
 
--   exposure
--   white balance
--   lighting softness
--   tonal clarity
--   distracting reflections
--   contact shadows
+Never for a preference for a prettier shape or finish.
 
-### 4. Preserve material reality
+**Scope rules:**
+- **Prefer masked/regional edits.** Target only the identified affected regions and preserve source-derived pixels outside them. Composite only corrected regions back into the source-derived image when necessary. Do not send the whole product through generation merely for convenience. When only a whole-image generative tool is available, use explicit prompt locks and judge the output by Verification — don't refuse the job.
+- **Fidelity boundary.** Scope is limited by what changes, not surface area alone. A broad reflection correction may be necessary without changing product facts. Stop and request a better source or reference when identity, geometry, finish, construction, or source-derived packaging cannot be preserved and verified. Broader coverage requires closer verification, not automatic approval.
+- **Never** generatively reconstruct packaging containing artwork, logos, or text; never guess hidden construction or missing detail.
+- All Fidelity locks and the Cleanup boundary apply.
 
-Do not over-clean reflective metal, glass, wood, cardboard, silicone, or
-other materials.
+**Prompts.** Use the variant that matches the job. Add the damage clause only for declared corrections, and supply the reference image to the editor with it.
 
-Keep believable variation and imperfection.
+Photographic defect:
 
-### 5. Compare against the source
+> Use the supplied photograph as the authoritative reference. Only correct the photographic appearance of the selected region: [defect, e.g. backdrop reflection on the lid]. Keep the product's geometry, edges, inherent finish, texture, and unaffected details unchanged. Render soft, neutral, believable softbox-style light with realistic light/dark variation. Do not reshape, redesign, smooth away texture, symmetrize, or invent detail. No CGI appearance.
 
-Before accepting the output, check:
+Damage clause (append only for a declared correction):
 
--   same products
--   same quantity
--   same geometry
--   same proportions
--   same packaging
--   same accessories
--   same orientation
--   same composition
--   same material identity
+> In [region], the photographed sample has [defect, e.g. a small dent in the rim]. Restore only that region to the form shown in the supplied reference image. Change nothing outside it.
 
-If an aesthetic improvement changed any of these, the edit went too far.
+Every reconstructed region is listed in the Report and gets extra scrutiny in the overlay check.
 
-------------------------------------------------------------------------
+---
 
 ## Verification
 
-Reject or regenerate if:
+**Automatic self-check, not user approval.** Run the checks before delivery. Re-edit outputs that fail on material drift (as defined in the overlay check); for marginal cases, deliver with a note in the Report rather than looping. Ask the user only when source/product facts are genuinely unknowable or required fidelity cannot be achieved with available tools, not to approve the Edit Plan, reconstruction routing, or verification.
 
--   product geometry changed
--   objects became more symmetrical than the source
--   components were added or removed
--   accessories changed shape
--   packaging artwork or wording changed materially
--   camera angle changed without instruction
--   objects were rearranged
--   reflective surfaces became CGI-like
--   products became excessively smooth or pristine
--   lighting became dramatic or artificial
--   the result looks like a render instead of a photograph
+- **Overlay** output on source at ~50% opacity before crop (translation and uniform scale only). Silhouettes, feature edges, placement, construction, and orientation should align outside the reconstruction regions. Expect some sub-pixel drift from resampling; judge drift by whether the product reads as the same item at normal viewing size and 100%, not by a bit-exact match. Only damage corrections declared in step 1 may change shape, and those must be checked against their reference separately. Tone differences are expected. If tools can't overlay, compare side by side and say so.
+- **Component count** matches inventory.
+- **Spill:** no backdrop tint; true colour kept.
+- **Edges:** no halos, fringing, or clipped detail at 100%.
+- **Packaging:** wording, artwork, logo unchanged; no invented legibility.
+- **Cleanup:** inherent and representative features remain; damage corrections match the reference without upgrading the product.
 
-Human sign-off:
+**Re-edit before delivery if any of these happen as visible material drift:** geometry visibly changed outside declared damage-correction regions, symmetrization, redesigned shape, components moved or substituted, altered packaging, metal went chrome/CGI, texture went synthetic, or lighting went dramatic. If re-edit fails the same check twice, deliver the better of the two with the limitation noted in the Report — don't regenerate indefinitely.
 
-At normal viewing size and at 100% zoom, ask:
+Final check, at normal size and 100%, both must be yes before delivery:
+> Does this faithfully represent the product being sold, including its inherent features and included items?
+> Does it look like the same product and arrangement, photographed better?
 
-> Does this still look like the exact physical item in the source
-> photograph?
+---
 
-and:
+## Report
 
-> Does it look like that item was photographed better, rather than
-> regenerated?
+After delivering, state briefly (omit empty items):
+- objects excluded, and any unresolved inclusion
+- regions reconstructed; damage corrected, with the reference used
+- damage preserved for lack of a reference
+- checks not performed
+- output specs not met (e.g. source resolution too low)
+- tool limitations encountered (e.g. only whole-image generation available; sub-pixel drift accepted)
 
-Both should be yes.
-
-------------------------------------------------------------------------
+---
 
 ## Output spec
 
-Default:
+- 2000 × 2000 px, square; PNG flattened on `#FFFFFF`, no alpha; sRGB
+- Product ~85% of frame where shape permits, room for shadow, no clipping
+- No aggressive upscaling or invented texture
 
--   2000 × 2000 px
--   square canvas
--   sRGB
--   clean white background
--   bright neutral exposure
--   subtle realistic contact shadows
--   product occupies approximately 80--90% of the useful frame where
-    appropriate
+## Amazon main image
 
-Do not upscale aggressively enough to make textures synthetic.
+Pure white; no promotional text, badges, graphics, borders, or scene. Keep text printed on the product or included packaging. Show only the product and included accessories/packaging; exclude demonstration props (e.g. a glass not included). Reconstruction must not introduce features, finishes, accessories, or packaging details absent from the real product. This is not a guarantee of category-specific acceptance.
 
-------------------------------------------------------------------------
-
-## Amazon main image guidance
-
-For an Amazon main image:
-
--   pure white background
--   no added text
--   no badges
--   no decorative graphics
--   no borders
--   no unrelated props
--   no environmental scene
-
-Packaging may appear if included with the purchase.
-
-Accessories may appear if included with the purchase.
-
-Props used only to demonstrate the product --- such as a drinking glass
-that is not included --- should normally be excluded from the main image
-and reserved for secondary listing images.
-
-------------------------------------------------------------------------
-
-## Prompt construction
-
-When invoking a generative image editor, communicate the task in this
-order:
-
-1.  establish the source as authoritative
-2.  lock product geometry and quantity
-3.  lock camera angle, orientation, and composition
-4.  describe permitted photographic improvements
-5.  establish bright, natural lighting
-6.  prevent over-polishing and CGI appearance
-
-Use this core instruction:
-
-> Use the supplied photograph as the authoritative physical reference.
-> Preserve the exact product identity, geometry, proportions,
-> construction, quantity, packaging design, accessories, camera angle,
-> orientation, relative placement, and material characteristics.
->
-> This is photographic retouching, not product redesign.
->
-> Maintain the original composition and object orientation. Do not
-> rearrange, beautify, symmetrize, reshape, redesign, or make the
-> objects more premium.
->
-> Replace the improvised background with a clean white e-commerce
-> background. Brighten the image and create soft, neutral, believable
-> studio illumination similar to a simple large softbox setup. Reduce
-> distracting environmental reflections only where necessary.
->
-> Preserve realistic stainless-steel reflections, minor scratches,
-> cardboard texture, glass distortion, manufacturing variation, and
-> other subtle physical imperfections. Do not make reflective surfaces
-> perfectly smooth, uniformly bright, or CGI-like.
->
-> The finished image should look like the exact same physical objects
-> from the source photograph photographed under better conditions ---
-> not a 3D render or an AI recreation.
-
-------------------------------------------------------------------------
+---
 
 ## Gotchas
 
--   **Over-polishing is product drift.** Perfect metal, perfect
-    symmetry, and flawless packaging often make the result less
-    accurate, not more professional.
--   **Orientation matters.** Small changes to the box angle, tongs,
-    product rotation, or camera height can make the output feel like a
-    different shoot.
--   **Reflective objects need imperfection.** Some dark reflections and
-    environmental variation are necessary for stainless steel to look
-    real.
--   **Do not confuse lighting improvement with material replacement.**
-    Brightening stainless steel should not turn it into perfect chrome.
--   **Generative reconstruction is permitted only in service of better
-    photography.** It must not become permission to reinterpret the
-    physical product.
--   **Packaging text is fragile.** Preserve the source packaging as
-    literally as possible rather than asking the model to redesign or
-    clean up the graphics.
--   **When fidelity and polish conflict, choose fidelity.**
--   **When realism and perfection conflict, choose realism.**
+- **Despill before judging tone.** Stainless and glass mirror the backdrop.
+- **Brushed finish looks like scratches.** Apply the Cleanup tie-break.
+- **Mirroring is symmetrizing.** The other side of the same object is not a damage reference.
+- **Editors over-read repair language.** Keep the damage clause out of prompts that aren't fixing declared damage.
+- **Whole-image generative editors drift silently.** Prefer regional edits or compositing when possible; when whole-image regeneration is the only option, use explicit prompt locks and judge by Verification. Re-edit outputs that drift materially — don't loop on sub-pixel differences.
+- **Over-polish is product drift.** Fidelity beats polish; realism beats perfection.
 
-------------------------------------------------------------------------
+## Tools
+
+Prefer pixel-preserving masking and adjustment tools for the default path; use a source-referenced generative editor only when the task requires reconstruction or when nothing else is available. Judge all outputs by Verification, not by tool choice. Note tool limitations in the Report.
+
+**Shooting tip:** light grey or white backdrop and diffused daylight cut spill and dark metal at the source.
+
+---
 
 ## Version history
 
+- v2.0 — 2026-11-08 — Rewrite based on draft iteration SKILL7 (session Oct 2 2026). Added: region-by-region Edit Plan (PRESERVE / CONVENTIONAL RETOUCH / GENERATIVE RECONSTRUCTION / EXCLUDE), Cleanup boundary with damage-correction-with-reference rule, packaging hard lock, Report after delivery, and specific prompt templates for photographic defects and damage corrections. Softened two SKILL7 clauses that would reject most generative-editor outputs: the usable-pixel rule is now a preference rather than a gate; overlay verification judges material drift rather than bit-exact alignment, with a two-attempt ceiling before accepting the better output with a Report note. Supersedes v1.0 (frozen at commit 458f2f5 for rollback).
 - v1.0 — 2026-11-08 — Adopted into `gwaiblade/craft/skills/product-image-retouch/` per CANON_SKILL. Pre-adoption draft had YAML frontmatter (`name`, `description`) and structured sections (Objective, Product fidelity rule, Naturalism rule, Composition lock, Permitted improvements, Lighting target, Background, Reconstruction strength, Method, Verification, Output spec, Amazon main image guidance, Prompt construction, Gotchas); format mirrored sibling skill `product-image-extraction` and was preserved intact on adoption.
