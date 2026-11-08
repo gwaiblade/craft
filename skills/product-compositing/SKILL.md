@@ -134,5 +134,5 @@ For cookware or vessels containing food. Focus: **food realism and cooking authe
 
 ## Version history
 
-- v1.1 — 2026-08-09 — Adopted into `gwaiblade/craft/skills/product-compositing/` per CANON_SKILL. Reclassified from three protocols (Master Lifestyle, High-End Editorial, Food-Integrated) to one skill with three modes; shared Product Protection and Realism rules consolidated into the Rules section. Content otherwise unchanged.
+- v1.1 — 2026-08-09 — Adopted into `gwaiblade/craft/skills/product-compositing/` per CANON_SKILL. Reclassified from three protocols (Master Lifestyle, High-End Editorial, Food-Integrated) to one skill with three modes; per-protocol Product Protection and Realism blocks merged into a single shared Rules section (minor per-protocol wording differences collapsed). Added: When-to-use trigger, Tools, QC step in Method, and Gotchas section. Variable menus and short-form execution lines unchanged from source. Source docx retired 2026-11-08.
 - v1.0 — 2026-03-29 — Source document: Product Lifestyle Compositing Protocols (three-protocol structure).

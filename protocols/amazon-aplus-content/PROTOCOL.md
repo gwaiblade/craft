@@ -10,7 +10,7 @@
 
 **Skills called:** none (cookware insight library embedded at Step 3B)
 
-**Version:** 2.1
+**Version:** 2.2
 
 ---
 
@@ -291,7 +291,6 @@ Design the A+ page using high-performing modules.
 
 For each module produce:
 
-• Copy — Brand Voice and Customer Voice alternate  
 • Copy — Brand Voice and Customer Voice alternate  
 • Visual Suggestion — differentiated per module, insight-driven, passed to Visual Assets Prompt Creator
 
@@ -919,6 +918,7 @@ Each module Visual Suggestion is pasted individually by the user at generation t
 
 # VERSION HISTORY
 
+- v2.2 — 2026-11-08 — Housekeeping: removed duplicated bullet in Step 8 ("Copy — Brand Voice and Customer Voice alternate" listed twice, inherited from v2 source). Source .docx retired; this file is the sole canonical copy.
 - v2.1 — 2026-08-09 — Adopted into `gwaiblade/craft/protocols/amazon-aplus-content/` per CANON_PROTOCOL. Renamed from CANON CONTENTDESIGN — Amazon A+ Content Protocol. Canonical header block added; example ASIN genericized; sibling references updated to `amazon-aplus-visual-assets`. Content otherwise unchanged from v2. Cranberry's `aplus-content` v3.0 is an independent fork of this line.
 - v2 — Pre-adoption version (source .docx). Visual Type branching, Insight Source and Differentiation Note fields, dual-voice copy tables, cookware insight library.
 - v1 — Initial protocol.
