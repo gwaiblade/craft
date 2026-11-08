@@ -558,6 +558,6 @@ No bulk generation. No pre-planning. Each prompt is reviewed and approved before
 
 # VERSION HISTORY
 
-- v2.1 — 2026-08-09 — Adopted into `gwaiblade/craft/protocols/amazon-aplus-visual-assets/` per CANON_PROTOCOL. Renamed from CANON DESIGN — Amazon A+ Content Visual Assets Prompt Creator. Canonical header block added; upstream references updated to `amazon-aplus-content`. Content otherwise unchanged from v2. Cranberry's `aplus-visual-assets` v3.0 is an independent fork of this line.
+- v2.1 — 2026-08-09 — Adopted into `gwaiblade/craft/protocols/amazon-aplus-visual-assets/` per CANON_PROTOCOL. Renamed from CANON DESIGN — Amazon A+ Content Visual Assets Prompt Creator. Canonical header block added; upstream references updated to `amazon-aplus-content`. Content otherwise unchanged from v2. Cranberry's `aplus-visual-assets` v3.0 is an independent fork of this line. Source docx retired 2026-11-08.
 - v2 — Pre-adoption version (source .docx). Hard gate on Section 9, authenticity levels with benchmark blocks, AI-tells blocklist, scoring gate with APPROVE/REVISE/PIVOT, consistency lock.
 - v1 — Initial protocol.
