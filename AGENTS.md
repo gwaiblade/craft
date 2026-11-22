@@ -2,7 +2,7 @@
 
 ## 1. Build identity
 
-- **craft.** Track not recorded. Reusable personal skills (`skills/<name>/SKILL.md`) and workflow protocols (`protocols/<name>/PROTOCOL.md`).
+- **craft.** Personal track. Reusable personal skills (`skills/<name>/SKILL.md`) and workflow protocols (`protocols/<name>/PROTOCOL.md`).
 - Repo: `gwaiblade/craft` (**public**), local `/Users/mujiri/Code/craft`. Everything committed here is on public URLs.
 - No SPEC. Governing canons: `/Users/mujiri/Code/context-brain/governance/CANON_SKILL.md` and `/Users/mujiri/Code/context-brain/governance/CANON_PROTOCOL.md` — read the relevant one before adding or restructuring any entry.
 
